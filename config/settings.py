@@ -14,10 +14,16 @@ SECRET_KEY = os.environ.get(
     'django-insecure-^k$hziez^udbal6%-xmf2*spz91jgmfmczs0kv%q7zag7iprpi'
 )
 
-DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else []
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-2811e.up.railway.app',
+    'https://*.up.railway.app',
+]
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS += os.environ.get('CSRF_TRUSTED_ORIGINS').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
