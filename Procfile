@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py load_universities && python manage.py collectstatic --noinput && gunicorn config.wsgi --bind 0.0.0.0:$PORT
+web: python manage.py migrate && python manage.py load_universities && python manage.py demo_data && python manage.py collectstatic --noinput && gunicorn config.wsgi --bind 0.0.0.0:$PORT
