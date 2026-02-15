@@ -1,0 +1,34 @@
+<!-- Staff Sidebar Navigation -->
+<div class="sidebar">
+    <div class="sidebar-header">Boshqaruv</div>
+    <nav class="nav flex-column">
+        <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'staff_dashboard' %}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+        <a class="nav-link {% if active_page == 'applications' %}active{% endif %}" href="{% url 'staff_applications_list' %}">
+            <i class="bi bi-file-earmark-text"></i>Arizalar
+        </a>
+        <a class="nav-link" href="{% url 'staff_applications_list' %}?holat=yangi">
+            <i class="bi bi-bell"></i>Yangi arizalar
+            {% if unreviewed_count %}<span class="badge bg-danger ms-auto">{{ unreviewed_count }}</span>{% endif %}
+        </a>
+    </nav>
+    <div class="sidebar-header mt-3">Ma'lumotnomalar</div>
+    <nav class="nav flex-column">
+        <a class="nav-link {% if active_page == 'faculties' %}active{% endif %}" href="{% url 'staff_faculties' %}">
+            <i class="bi bi-building"></i>Fakultetlar
+        </a>
+        <a class="nav-link {% if active_page == 'specialties' %}active{% endif %}" href="{% url 'staff_specialties' %}">
+            <i class="bi bi-bookmark"></i>Yo'nalishlar
+        </a>
+        <a class="nav-link {% if active_page == 'document_types' %}active{% endif %}" href="{% url 'staff_document_types' %}">
+            <i class="bi bi-file-earmark"></i>Hujjat turlari
+        </a>
+    </nav>
+    <div class="sidebar-header mt-3">Tizim</div>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="/admin/" target="_blank">
+            <i class="bi bi-gear"></i>Django Admin
+        </a>
+    </nav>
+</div>

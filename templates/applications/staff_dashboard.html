@@ -1,0 +1,214 @@
+{% extends 'staff_base.html' %}
+{% with active_page='dashboard' %}
+
+{% block title %}Boshqaruv paneli - Xodim{% endblock %}
+
+{% block staff_content %}
+    <h4 class="fw-bold mb-4"><i class="bi bi-speedometer2 me-2"></i>Boshqaruv paneli</h4>
+
+    <!-- Stat Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card stat-card" style="border-left-color: #3b82f6;">
+                <div class="card-body">
+                    <div class="stat-icon mb-1"><i class="bi bi-files fs-4 text-primary"></i></div>
+                    <div class="stat-number text-primary">{{ total_applications }}</div>
+                    <div class="stat-label">Jami arizalar</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card stat-card" style="border-left-color: #06b6d4;">
+                <div class="card-body">
+                    <div class="stat-icon mb-1"><i class="bi bi-bell fs-4 text-info"></i></div>
+                    <div class="stat-number text-info">{{ new_applications }}</div>
+                    <div class="stat-label">Yangi</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card stat-card" style="border-left-color: #10b981;">
+                <div class="card-body">
+                    <div class="stat-icon mb-1"><i class="bi bi-check-circle fs-4 text-success"></i></div>
+                    <div class="stat-number text-success">{{ accepted_applications }}</div>
+                    <div class="stat-label">Qabul qilindi</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card stat-card" style="border-left-color: #ef4444;">
+                <div class="card-body">
+                    <div class="stat-icon mb-1"><i class="bi bi-x-circle fs-4 text-danger"></i></div>
+                    <div class="stat-number text-danger">{{ rejected_applications }}</div>
+                    <div class="stat-label">Rad etildi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-pie-chart me-2"></i>Arizalar holati</h6>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="statusChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-bar-chart me-2"></i>Fakultetlar bo'yicha</h6>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="facultyChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications Table -->
+    <div class="card">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>So'nggi arizalar</h6>
+            <a href="{% url 'staff_applications_list' %}" class="btn btn-sm btn-outline-primary">Barchasini ko'rish</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Abituriyent</th>
+                            <th>Yo'nalish</th>
+                            <th>Fakultet</th>
+                            <th>Holat</th>
+                            <th>Sana</th>
+                            <th>Amal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in recent_applications %}
+                        <tr>
+                            <td><strong>{{ app.pk }}</strong></td>
+                            <td>{{ app.abituriyent.get_full_name }}</td>
+                            <td>{{ app.yonalish.nomi|truncatewords:4 }}</td>
+                            <td>{{ app.yonalish.fakultet.nomi|truncatewords:3 }}</td>
+                            <td><span class="badge bg-{{ app.holat_rangi }} badge-status">{{ app.get_holat_display }}</span></td>
+                            <td>{{ app.yaratilgan_sana|date:"d.m.Y" }}</td>
+                            <td>
+                                <a href="{% url 'staff_application_detail' app.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" class="text-center py-4 text-muted">Arizalar topilmadi</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faculty Stats -->
+    {% if faculty_stats %}
+    <div class="card mt-4">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-building me-2"></i>Fakultetlar statistikasi</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fakultet</th>
+                            <th>Arizalar soni</th>
+                            <th>Grafik</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for faculty in faculty_stats %}
+                        <tr>
+                            <td class="fw-semibold">{{ faculty.nomi }}</td>
+                            <td><span class="badge bg-primary">{{ faculty.arizalar_soni }}</span></td>
+                            <td style="width: 40%;">
+                                <div class="progress" style="height: 22px;">
+                                    <div class="progress-bar" style="width: {% widthratio faculty.arizalar_soni total_applications 100 %}%">
+                                        {{ faculty.arizalar_soni }}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    // Status Doughnut Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ status_data.labels|safe }},
+            datasets: [{
+                data: {{ status_data.data|safe }},
+                backgroundColor: {{ status_data.colors|safe }},
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 15, usePointStyle: true, pointStyleWidth: 10 }
+                }
+            }
+        }
+    });
+
+    // Faculty Bar Chart
+    fetch('{% url "api_stats" %}')
+        .then(r => r.json())
+        .then(data => {
+            const facultyCtx = document.getElementById('facultyChart').getContext('2d');
+            new Chart(facultyCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.faculty_data.map(f => f.nomi.length > 18 ? f.nomi.substring(0, 18) + '...' : f.nomi),
+                    datasets: [{
+                        label: 'Arizalar soni',
+                        data: data.faculty_data.map(f => f.soni),
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+</script>
+{% endblock %}
+
+{% endwith %}

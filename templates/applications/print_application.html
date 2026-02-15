@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Ariza #{{ application.pk }} - Chop etish</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #000;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+        .no-print { text-align: center; margin-bottom: 30px; padding: 15px; background: #f0f4ff; border-radius: 8px; }
+        .no-print button {
+            padding: 8px 24px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 14px;
+        }
+        .no-print button.primary { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+        .header { text-align: center; border-bottom: 3px double #000; padding-bottom: 20px; margin-bottom: 25px; }
+        .header h1 { font-size: 16px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .header h2 { font-size: 20px; margin-bottom: 5px; }
+        .header p { font-size: 12px; color: #555; }
+        .section { margin-bottom: 20px; }
+        .section-title { font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 12px; letter-spacing: 1px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        table.info-table td { padding: 6px 10px; border: 1px solid #999; vertical-align: top; }
+        table.info-table td:first-child { font-weight: bold; width: 40%; background: #f5f5f5; }
+        table.doc-table { font-size: 13px; }
+        table.doc-table th { background: #e0e0e0; padding: 8px 10px; border: 1px solid #999; text-align: left; font-size: 12px; }
+        table.doc-table td { padding: 6px 10px; border: 1px solid #999; }
+        .status { display: inline-block; padding: 2px 12px; border: 1px solid #000; font-weight: bold; font-size: 13px; }
+        .status-yangi { border-color: #0066cc; color: #0066cc; }
+        .status-korib_chiqilmoqda { border-color: #cc8800; color: #cc8800; }
+        .status-qabul_qilindi { border-color: #008800; color: #008800; }
+        .status-rad_etildi { border-color: #cc0000; color: #cc0000; }
+        .signatures { margin-top: 50px; }
+        .signatures table { border: none; }
+        .signatures td { border: none !important; padding: 20px 10px 5px; text-align: center; }
+        .signatures .line { border-top: 1px solid #000; margin-top: 40px; padding-top: 5px; font-size: 12px; }
+        .footer-print { margin-top: 30px; text-align: center; font-size: 11px; color: #888; border-top: 1px solid #ccc; padding-top: 10px; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { padding: 20px; margin: 0; }
+            @page { margin: 2cm; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button class="primary" onclick="window.print()"><b>Chop etish</b></button>
+        <button onclick="window.close()">Yopish</button>
+    </div>
+
+    <div class="header">
+        <h1>Oliy ta'lim muassasasi</h1>
+        <h2>Hujjat Qabul Tizimi</h2>
+        <p>{{ application.qabul_davri.nomi }}</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h2 style="font-size: 18px;">ARIZA #{{ application.pk }}</h2>
+        <span class="status status-{{ application.holat }}">{{ application.get_holat_display }}</span>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Abituriyent ma'lumotlari</div>
+        <table class="info-table">
+            <tr>
+                <td>F.I.O</td>
+                <td>
+                    {{ application.abituriyent.last_name }}
+                    {{ application.abituriyent.first_name }}
+                    {% if application.abituriyent.applicant_profile.otasining_ismi %}
+                        {{ application.abituriyent.applicant_profile.otasining_ismi }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Passport seriya va raqami</td>
+                <td>{{ application.abituriyent.applicant_profile.passport_seriya|default:"Ko'rsatilmagan" }}</td>
+            </tr>
+            <tr>
+                <td>Tug'ilgan sana</td>
+                <td>{{ application.abituriyent.applicant_profile.tugilgan_sana|date:"d.m.Y"|default:"Ko'rsatilmagan" }}</td>
+            </tr>
+            <tr>
+                <td>Telefon raqami</td>
+                <td>{{ application.abituriyent.applicant_profile.telefon|default:"Ko'rsatilmagan" }}</td>
+            </tr>
+            <tr>
+                <td>Elektron pochta</td>
+                <td>{{ application.abituriyent.email|default:"Ko'rsatilmagan" }}</td>
+            </tr>
+            <tr>
+                <td>Yashash manzili</td>
+                <td>{{ application.abituriyent.applicant_profile.manzil|default:"Ko'rsatilmagan" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Ariza ma'lumotlari</div>
+        <table class="info-table">
+            <tr>
+                <td>Yo'nalish</td>
+                <td>{{ application.yonalish.nomi }} ({{ application.yonalish.kodi }})</td>
+            </tr>
+            <tr>
+                <td>Fakultet</td>
+                <td>{{ application.yonalish.fakultet.nomi }}</td>
+            </tr>
+            <tr>
+                <td>Ta'lim turi</td>
+                <td>{{ application.yonalish.get_talim_turi_display }}</td>
+            </tr>
+            <tr>
+                <td>Qabul davri</td>
+                <td>{{ application.qabul_davri.nomi }}</td>
+            </tr>
+            <tr>
+                <td>Ariza yaratilgan sana</td>
+                <td>{{ application.yaratilgan_sana|date:"d.m.Y H:i" }}</td>
+            </tr>
+            <tr>
+                <td>Holat</td>
+                <td><strong>{{ application.get_holat_display }}</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    {% if documents %}
+    <div class="section">
+        <div class="section-title">Yuklangan hujjatlar</div>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Hujjat turi</th>
+                    <th>Holat</th>
+                    <th>Yuklangan sana</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ doc.hujjat_turi.nomi }}</td>
+                    <td>{{ doc.get_holat_display }}</td>
+                    <td>{{ doc.yuklangan_sana|date:"d.m.Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if application.izoh %}
+    <div class="section">
+        <div class="section-title">Izoh</div>
+        <p>{{ application.izoh }}</p>
+    </div>
+    {% endif %}
+
+    <div class="signatures">
+        <table>
+            <tr>
+                <td style="width: 50%;">
+                    <div class="line">Abituriyent imzosi</div>
+                </td>
+                <td style="width: 50%;">
+                    <div class="line">Qabul komissiyasi</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer-print">
+        Ushbu hujjat "Hujjat Qabul Tizimi" orqali avtomatik shakllangan. | Sana: {% now "d.m.Y H:i" %}
+    </div>
+</body>
+</html>

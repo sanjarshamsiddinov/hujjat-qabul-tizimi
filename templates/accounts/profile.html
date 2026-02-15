@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<div class="main-content no-sidebar">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm mt-3">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-person me-2"></i>Shaxsiy ma'lumotlar</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">{{ form.first_name.label }}</label>
+                                    {{ form.first_name }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">{{ form.last_name.label }}</label>
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{{ form.email.label }}</label>
+                                {{ form.email }}
+                            </div>
+                            {% for field in form %}
+                                {% if field.name != 'first_name' and field.name != 'last_name' and field.name != 'email' %}
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary py-2 px-4">
+                                <i class="bi bi-check-lg me-2"></i>Saqlash
+                            </button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary py-2 px-4 ms-2">Orqaga</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

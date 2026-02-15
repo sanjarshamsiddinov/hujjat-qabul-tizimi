@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'includes/staff_sidebar.html' %}
+<div class="main-content">
+    {% block staff_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer staff-footer mt-auto">
+    <div class="container">
+        <div class="text-center">
+            <p class="mb-0 small">&copy; 2026 Hujjat Qabul Tizimi. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

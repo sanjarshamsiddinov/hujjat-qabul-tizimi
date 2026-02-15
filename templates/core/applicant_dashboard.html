@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Shaxsiy kabinet{% endblock %}
+
+{% block content %}
+<div class="main-content no-sidebar">
+    <div class="container-fluid" style="max-width: 1100px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2"></i>Shaxsiy kabinet</h4>
+            <a href="{% url 'create_application' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Yangi ariza
+            </a>
+        </div>
+
+        <!-- Profile completion alert -->
+        {% if not profile.passport_seriya or not profile.telefon %}
+        <div class="alert alert-warning d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <div>
+                Iltimos, <a href="{% url 'profile' %}" class="alert-link">profilingizni to'ldiring</a> (passport va telefon ma'lumotlari).
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="card stat-card" style="border-left-color: #0d6efd;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-2"><i class="bi bi-file-earmark-text fs-3 text-primary"></i></div>
+                        <div class="stat-number text-primary">{{ total_count }}</div>
+                        <div class="stat-label">Jami arizalar</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card" style="border-left-color: #ffc107;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-2"><i class="bi bi-hourglass-split fs-3 text-warning"></i></div>
+                        <div class="stat-number text-warning">{{ in_process_count }}</div>
+                        <div class="stat-label">Jarayonda</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card" style="border-left-color: #198754;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-2"><i class="bi bi-check-circle fs-3 text-success"></i></div>
+                        <div class="stat-number text-success">{{ accepted_count }}</div>
+                        <div class="stat-label">Qabul qilindi</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card" style="border-left-color: #dc3545;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-2"><i class="bi bi-x-circle fs-3 text-danger"></i></div>
+                        <div class="stat-number text-danger">{{ rejected_count }}</div>
+                        <div class="stat-label">Rad etildi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications list -->
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>Mening arizalarim</h5>
+            </div>
+            <div class="card-body">
+                {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Yo'nalish</th>
+                                <th>Fakultet</th>
+                                <th>Holat</th>
+                                <th>Hujjatlar</th>
+                                <th>Sana</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                            <tr>
+                                <td><strong>{{ app.pk }}</strong></td>
+                                <td>{{ app.yonalish.nomi }}</td>
+                                <td>{{ app.yonalish.fakultet.nomi }}</td>
+                                <td>
+                                    <span class="badge bg-{{ app.holat_rangi }} badge-status">
+                                        {{ app.get_holat_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ app.hujjatlar_soni }}</span>
+                                    {% if app.tasdiqlangan_hujjatlar_soni > 0 %}
+                                    <span class="badge bg-success">{{ app.tasdiqlangan_hujjatlar_soni }} tasdiqlangan</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ app.yaratilgan_sana|date:"d.m.Y" }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'application_detail' app.pk %}" class="btn btn-outline-primary" title="Ko'rish">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'upload_documents' app.pk %}" class="btn btn-outline-success" title="Hujjat yuklash">
+                                            <i class="bi bi-upload"></i>
+                                        </a>
+                                        <a href="{% url 'print_application' app.pk %}" class="btn btn-outline-secondary" title="Chop etish" target="_blank">
+                                            <i class="bi bi-printer"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-3">Hali arizalar yo'q</p>
+                    <a href="{% url 'create_application' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Birinchi arizani yarating
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

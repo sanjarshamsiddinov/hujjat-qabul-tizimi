@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bosh sahifa - Hujjat Qabul Tizimi{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center" style="margin-top: 56px;">
+    <div class="container">
+        <div class="animate-fade-in">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-mortarboard-fill me-3"></i>Hujjat Qabul Tizimi
+            </h1>
+            <p class="lead mb-4" style="max-width: 700px; margin: 0 auto; opacity: 0.9;">
+                Oliy ta'lim muassasalariga hujjatlarni onlayn topshiring. Tez, qulay va shaffof qabul jarayoni.
+            </p>
+            {% if active_campaign %}
+            <div class="badge bg-success fs-6 mb-4 p-2 px-4">
+                <i class="bi bi-check-circle me-1"></i> Qabul ochiq: {{ active_campaign.nomi }}
+                ({{ active_campaign.boshlanish_sanasi|date:"d.m.Y" }} — {{ active_campaign.tugash_sanasi|date:"d.m.Y" }})
+            </div>
+            {% else %}
+            <div class="badge bg-secondary fs-6 mb-4 p-2 px-4">
+                <i class="bi bi-clock me-1"></i> Hozirda qabul yopiq
+            </div>
+            {% endif %}
+            <div class="mt-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-2">
+                        <i class="bi bi-speedometer2 me-2"></i>Boshqaruv paneli
+                    </a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg me-2">
+                        <i class="bi bi-person-plus me-2"></i>Ro'yxatdan o'tish
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Kirish
+                    </a>
+                {% endif %}
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'check_status' %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-search me-1"></i>Ariza holatini tekshirish
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body py-4">
+                        <i class="bi bi-bank fs-2 text-primary mb-2 d-block"></i>
+                        <h3 class="fw-bold counter" data-target="{{ universities_count|default:0 }}">0</h3>
+                        <p class="text-muted mb-0">OTMlar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body py-4">
+                        <i class="bi bi-bookmark fs-2 text-success mb-2 d-block"></i>
+                        <h3 class="fw-bold counter" data-target="{{ specialties_count|default:0 }}">0</h3>
+                        <p class="text-muted mb-0">Yo'nalishlar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body py-4">
+                        <i class="bi bi-people fs-2 text-info mb-2 d-block"></i>
+                        <h3 class="fw-bold counter" data-target="{{ applicants_count|default:0 }}">0</h3>
+                        <p class="text-muted mb-0">Abituriyentlar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body py-4">
+                        <i class="bi bi-file-earmark-check fs-2 text-warning mb-2 d-block"></i>
+                        <h3 class="fw-bold counter" data-target="{{ applications_count|default:0 }}">0</h3>
+                        <p class="text-muted mb-0">Arizalar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-2 fw-bold">Tizim imkoniyatlari</h2>
+        <p class="text-center text-muted mb-5">Zamonaviy va qulay raqamli hujjat boshqaruv tizimi</p>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold">Onlayn hujjat yuklash</h5>
+                        <p class="text-muted">Barcha zarur hujjatlarni elektron tarzda yuklang. PDF va rasm formatlarida.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-check2-circle fs-1 text-success"></i>
+                        </div>
+                        <h5 class="fw-bold">Ariza holati kuzatuvi</h5>
+                        <p class="text-muted">Arizangiz qaysi bosqichda ekanligini real vaqtda kuzating.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-shield-check fs-1 text-warning"></i>
+                        </div>
+                        <h5 class="fw-bold">Xavfsiz saqlash</h5>
+                        <p class="text-muted">Barcha hujjatlar xavfsiz serverda saqlanadi va himoyalangan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Universities Section -->
+{% if universities %}
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center mb-2 fw-bold">Oliy ta'lim muassasalari</h2>
+        <p class="text-center text-muted mb-4">O'zbekiston Respublikasi OTMlari ro'yxati</p>
+
+        <!-- Filter buttons -->
+        <div class="text-center mb-4">
+            <button class="btn btn-primary btn-sm active me-1 mb-1 uni-filter" data-filter="all">Barchasi ({{ universities_count }})</button>
+            <button class="btn btn-outline-primary btn-sm me-1 mb-1 uni-filter" data-filter="davlat">Davlat OTM</button>
+            <button class="btn btn-outline-primary btn-sm me-1 mb-1 uni-filter" data-filter="xususiy">Nodavlat OTM</button>
+            <button class="btn btn-outline-primary btn-sm me-1 mb-1 uni-filter" data-filter="xorijiy">Xorijiy filiallar</button>
+            <button class="btn btn-outline-primary btn-sm me-1 mb-1 uni-filter" data-filter="harbiy">Harbiy OTM</button>
+        </div>
+
+        <!-- Search -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <input type="text" id="uniSearch" class="form-control" placeholder="OTM nomini qidirish...">
+            </div>
+        </div>
+
+        <div class="row g-3" id="universitiesGrid">
+            {% for uni in universities %}
+            <div class="col-md-6 col-lg-4 uni-card" data-type="{{ uni.turi }}">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-shrink-0 me-3">
+                                {% if uni.turi == 'davlat' %}
+                                <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="bi bi-bank fs-5 text-primary"></i>
+                                </div>
+                                {% elif uni.turi == 'xususiy' %}
+                                <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="bi bi-building fs-5 text-success"></i>
+                                </div>
+                                {% elif uni.turi == 'xorijiy' %}
+                                <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="bi bi-globe fs-5 text-info"></i>
+                                </div>
+                                {% else %}
+                                <div class="bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="bi bi-shield-fill fs-5 text-danger"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">{{ uni.nomi }}</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="badge bg-{{ uni.turi|yesno:'primary,success,info,danger' }} bg-opacity-75" style="font-size: 0.7rem;">{{ uni.get_turi_display }}</span>
+                                    {% if uni.viloyat %}
+                                    <span class="badge bg-secondary bg-opacity-50" style="font-size: 0.7rem;">
+                                        <i class="bi bi-geo-alt"></i> {{ uni.viloyat }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="noResults" class="text-center py-4 d-none">
+            <i class="bi bi-search fs-1 text-muted"></i>
+            <p class="text-muted mt-2">Hech narsa topilmadi</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- How it works -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-2 fw-bold">Qanday ishlaydi?</h2>
+        <p class="text-center text-muted mb-5">Oddiy 4 bosqichda arizangizni topshiring</p>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fw-bold fs-4">1</span>
+                </div>
+                <h6 class="fw-bold">Ro'yxatdan o'ting</h6>
+                <p class="text-muted small">Tizimda shaxsiy kabinet oching</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fw-bold fs-4">2</span>
+                </div>
+                <h6 class="fw-bold">Yo'nalish tanlang</h6>
+                <p class="text-muted small">O'zingizga mos yo'nalishni tanlang</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fw-bold fs-4">3</span>
+                </div>
+                <h6 class="fw-bold">Hujjatlar yuklang</h6>
+                <p class="text-muted small">Zarur hujjatlarni yuklang</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fw-bold fs-4">4</span>
+                </div>
+                <h6 class="fw-bold">Natijani kuting</h6>
+                <p class="text-muted small">Arizangiz ko'rib chiqiladi</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// University filter and search
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.uni-filter');
+    const cards = document.querySelectorAll('.uni-card');
+    const searchInput = document.getElementById('uniSearch');
+    const noResults = document.getElementById('noResults');
+
+    if (!filterBtns.length) return;
+
+    let currentFilter = 'all';
+
+    function applyFilters() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const type = card.dataset.type;
+            const name = card.querySelector('.fw-bold').textContent.toLowerCase();
+            const matchesFilter = currentFilter === 'all' || type === currentFilter;
+            const matchesSearch = name.includes(searchTerm);
+
+            if (matchesFilter && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (noResults) {
+            noResults.classList.toggle('d-none', visibleCount > 0);
+        }
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => {
+                b.classList.remove('active', 'btn-primary');
+                b.classList.add('btn-outline-primary');
+            });
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('active', 'btn-primary');
+            currentFilter = this.dataset.filter;
+            applyFilters();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+});
+</script>
+{% endblock %}

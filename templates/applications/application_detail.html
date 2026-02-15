@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Ariza #{{ application.pk }}{% endblock %}
+
+{% block content %}
+<div class="main-content no-sidebar">
+    <div class="container" style="max-width: 900px;">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Boshqaruv paneli</a></li>
+                <li class="breadcrumb-item active">Ariza #{{ application.pk }}</li>
+            </ol>
+        </nav>
+
+        <!-- Application Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>Ariza #{{ application.pk }}</h5>
+                <span class="badge bg-{{ application.holat_rangi }} badge-status fs-6">{{ application.get_holat_display }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Yo'nalish:</strong> {{ application.yonalish.nomi }}</p>
+                        <p><strong>Fakultet:</strong> {{ application.yonalish.fakultet.nomi }}</p>
+                        <p><strong>Ta'lim turi:</strong> {{ application.yonalish.get_talim_turi_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Qabul davri:</strong> {{ application.qabul_davri.nomi }}</p>
+                        <p><strong>Yaratilgan:</strong> {{ application.yaratilgan_sana|date:"d.m.Y H:i" }}</p>
+                        <p><strong>Yangilangan:</strong> {{ application.yangilangan_sana|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+                {% if application.izoh %}
+                <div class="alert alert-info mt-2">
+                    <strong>Izoh:</strong> {{ application.izoh }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-folder me-2"></i>Hujjatlar</h5>
+                {% if application.holat == 'yangi' or application.holat == 'korib_chiqilmoqda' %}
+                <a href="{% url 'upload_documents' application.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-upload me-1"></i>Hujjat yuklash
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if documents %}
+                    {% for doc in documents %}
+                    <div class="document-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-file-earmark fs-4 text-primary me-2"></i>
+                            <strong>{{ doc.hujjat_turi.nomi }}</strong>
+                            <br>
+                            <small class="text-muted">Yuklangan: {{ doc.yuklangan_sana|date:"d.m.Y H:i" }}</small>
+                            {% if doc.izoh %}
+                            <br><small class="text-{{ doc.holat_rangi }}"><i class="bi bi-chat-dots me-1"></i>{{ doc.izoh }}</small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <span class="badge bg-{{ doc.holat_rangi }} badge-status me-2">{{ doc.get_holat_display }}</span>
+                            <a href="{{ doc.fayl.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-3">
+                    <p class="text-muted">Hali hujjat yuklanmagan</p>
+                </div>
+                {% endif %}
+
+                {% if missing_types %}
+                <div class="alert alert-warning mt-3">
+                    <strong><i class="bi bi-exclamation-triangle me-1"></i>Quyidagi majburiy hujjatlar yuklanmagan:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for doc_type in missing_types %}
+                        <li>{{ doc_type.nomi }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Orqaga</a>
+            <a href="{% url 'print_application' application.pk %}" target="_blank" class="btn btn-outline-primary"><i class="bi bi-printer me-1"></i>Chop etish</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

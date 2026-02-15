@@ -1,0 +1,111 @@
+{% extends 'staff_base.html' %}
+{% with active_page='applications' %}
+
+{% block title %}Arizalar ro'yxati{% endblock %}
+
+{% block staff_content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0"><i class="bi bi-file-earmark-text me-2"></i>Arizalar ro'yxati</h4>
+        <div>
+            <span class="badge bg-primary fs-6 me-2">{{ page_obj.paginator.count }} ta ariza</span>
+            <a href="{% url 'export_applications' %}?{{ request.GET.urlencode }}" class="btn btn-success btn-sm">
+                <i class="bi bi-file-earmark-excel me-1"></i>Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Holat</label>
+                    <select name="holat" class="form-select">
+                        <option value="">Barchasi</option>
+                        <option value="yangi" {% if current_holat == 'yangi' %}selected{% endif %}>Yangi</option>
+                        <option value="korib_chiqilmoqda" {% if current_holat == 'korib_chiqilmoqda' %}selected{% endif %}>Ko'rib chiqilmoqda</option>
+                        <option value="qabul_qilindi" {% if current_holat == 'qabul_qilindi' %}selected{% endif %}>Qabul qilindi</option>
+                        <option value="rad_etildi" {% if current_holat == 'rad_etildi' %}selected{% endif %}>Rad etildi</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Fakultet</label>
+                    <select name="fakultet" class="form-select">
+                        <option value="">Barchasi</option>
+                        {% for faculty in faculties %}
+                        <option value="{{ faculty.id }}" {% if current_fakultet == faculty.id|stringformat:"d" %}selected{% endif %}>{{ faculty.nomi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Qidirish</label>
+                    <input type="text" name="q" class="form-control" placeholder="Ism, familiya yoki passport..." value="{{ qidiruv }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i>Qidirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Abituriyent</th>
+                            <th>Passport</th>
+                            <th>Yo'nalish</th>
+                            <th>Fakultet</th>
+                            <th>Hujjatlar</th>
+                            <th>Holat</th>
+                            <th>Sana</th>
+                            <th>Amal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in page_obj %}
+                        <tr>
+                            <td><strong>{{ app.pk }}</strong></td>
+                            <td>{{ app.abituriyent.get_full_name }}</td>
+                            <td>
+                                {% if app.abituriyent.applicant_profile.passport_seriya %}
+                                {{ app.abituriyent.applicant_profile.passport_seriya }}
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ app.yonalish.nomi|truncatewords:4 }}</td>
+                            <td>{{ app.yonalish.fakultet.nomi|truncatewords:3 }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ app.hujjatlar_soni }}</span>
+                            </td>
+                            <td><span class="badge bg-{{ app.holat_rangi }} badge-status">{{ app.get_holat_display }}</span></td>
+                            <td>{{ app.yaratilgan_sana|date:"d.m.Y" }}</td>
+                            <td>
+                                <a href="{% url 'staff_application_detail' app.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye me-1"></i>Ko'rish
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                Arizalar topilmadi
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include 'includes/pagination.html' %}
+{% endblock %}
+
+{% endwith %}

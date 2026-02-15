@@ -1,0 +1,75 @@
+{% extends 'staff_base.html' %}
+{% with active_page='applications' %}
+
+{% block title %}Hujjat tekshirish{% endblock %}
+
+{% block staff_content %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'staff_application_detail' document.ariza.pk %}">Ariza #{{ document.ariza.pk }}</a></li>
+            <li class="breadcrumb-item active">Hujjat tekshirish</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark me-2"></i>{{ document.hujjat_turi.nomi }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p><strong>Ariza:</strong> #{{ document.ariza.pk }} — {{ document.ariza.abituriyent.get_full_name }}</p>
+                        <p><strong>Holat:</strong> <span class="badge bg-{{ document.holat_rangi }}">{{ document.get_holat_display }}</span></p>
+                        <p><strong>Yuklangan:</strong> {{ document.yuklangan_sana|date:"d.m.Y H:i" }}</p>
+                    </div>
+
+                    <!-- Document preview -->
+                    <div class="border rounded p-3 bg-light text-center">
+                        {% if document.fayl.name|lower|slice:"-4:" == ".pdf" %}
+                        <iframe src="{{ document.fayl.url }}" width="100%" height="600px" style="border: none; border-radius: 8px;"></iframe>
+                        {% elif document.fayl.name|lower|slice:"-4:" == ".jpg" or document.fayl.name|lower|slice:"-4:" == ".png" or document.fayl.name|lower|slice:"-5:" == ".jpeg" %}
+                        <img src="{{ document.fayl.url }}" class="img-fluid" style="max-height: 600px; border-radius: 8px;" alt="Hujjat">
+                        {% else %}
+                        <div class="py-5">
+                            <i class="bi bi-file-earmark fs-1 text-muted"></i>
+                            <p class="mt-2">Oldindan ko'rish mumkin emas</p>
+                            <a href="{{ document.fayl.url }}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-download me-1"></i>Yuklab olish
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 76px;">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-check2-square me-2"></i>Hujjatni tekshirish</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ form.holat.label }}</label>
+                            {{ form.holat }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ form.izoh.label }}</label>
+                            {{ form.izoh }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-check-lg me-2"></i>Saqlash
+                        </button>
+                        <a href="{% url 'staff_application_detail' document.ariza.pk %}" class="btn btn-outline-secondary w-100">Orqaga</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% endwith %}

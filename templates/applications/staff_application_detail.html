@@ -1,0 +1,132 @@
+{% extends 'staff_base.html' %}
+{% with active_page='applications' %}
+
+{% block title %}Ariza #{{ application.pk }} - Tekshirish{% endblock %}
+
+{% block staff_content %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'staff_applications_list' %}">Arizalar</a></li>
+            <li class="breadcrumb-item active">Ariza #{{ application.pk }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Left: Application & Applicant Info -->
+        <div class="col-md-8">
+            <!-- Applicant info -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-person me-2"></i>Abituriyent ma'lumotlari</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>F.I.O:</strong> {{ application.abituriyent.get_full_name }}
+                            {% if application.abituriyent.applicant_profile.otasining_ismi %}
+                                {{ application.abituriyent.applicant_profile.otasining_ismi }}
+                            {% endif %}
+                            </p>
+                            <p><strong>Passport:</strong> {{ application.abituriyent.applicant_profile.passport_seriya|default:"Ko'rsatilmagan" }}</p>
+                            <p><strong>Tug'ilgan sana:</strong> {{ application.abituriyent.applicant_profile.tugilgan_sana|date:"d.m.Y"|default:"Ko'rsatilmagan" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Telefon:</strong> {{ application.abituriyent.applicant_profile.telefon|default:"Ko'rsatilmagan" }}</p>
+                            <p><strong>Email:</strong> {{ application.abituriyent.email|default:"Ko'rsatilmagan" }}</p>
+                            <p><strong>Manzil:</strong> {{ application.abituriyent.applicant_profile.manzil|default:"Ko'rsatilmagan" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application info -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>Ariza #{{ application.pk }}</h5>
+                    <div>
+                        <a href="{% url 'print_application' application.pk %}" target="_blank" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="bi bi-printer me-1"></i>Chop etish
+                        </a>
+                        <span class="badge bg-{{ application.holat_rangi }} badge-status fs-6">{{ application.get_holat_display }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Yo'nalish:</strong> {{ application.yonalish.nomi }}</p>
+                            <p><strong>Fakultet:</strong> {{ application.yonalish.fakultet.nomi }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Ta'lim turi:</strong> {{ application.yonalish.get_talim_turi_display }}</p>
+                            <p><strong>Qabul davri:</strong> {{ application.qabul_davri.nomi }}</p>
+                        </div>
+                    </div>
+                    <p><strong>Yaratilgan:</strong> {{ application.yaratilgan_sana|date:"d.m.Y H:i" }} | <strong>Yangilangan:</strong> {{ application.yangilangan_sana|date:"d.m.Y H:i" }}</p>
+                    {% if application.izoh %}
+                    <div class="alert alert-info"><strong>Izoh:</strong> {{ application.izoh }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-folder me-2"></i>Hujjatlar ({{ documents.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% for doc in documents %}
+                    <div class="document-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-file-earmark fs-4 text-primary me-2"></i>
+                            <strong>{{ doc.hujjat_turi.nomi }}</strong>
+                            <br>
+                            <small class="text-muted">Yuklangan: {{ doc.yuklangan_sana|date:"d.m.Y H:i" }}</small>
+                            {% if doc.izoh %}
+                            <br><small class="text-{{ doc.holat_rangi }}"><i class="bi bi-chat me-1"></i>{{ doc.izoh }}</small>
+                            {% endif %}
+                            {% if doc.tekshirgan %}
+                            <br><small class="text-muted">Tekshirgan: {{ doc.tekshirgan.get_full_name }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-{{ doc.holat_rangi }} badge-status">{{ doc.get_holat_display }}</span>
+                            <a href="{{ doc.fayl.url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Ko'rish"><i class="bi bi-eye"></i></a>
+                            <a href="{% url 'staff_review_document' doc.pk %}" class="btn btn-sm btn-outline-warning" title="Tekshirish"><i class="bi bi-pencil-square"></i></a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-3 text-muted">Hujjatlar yuklanmagan</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Status change form -->
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 76px;">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Ariza holatini o'zgartirish</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ status_form.holat.label }}</label>
+                            {{ status_form.holat }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ status_form.izoh.label }}</label>
+                            {{ status_form.izoh }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-lg me-2"></i>Saqlash
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% endwith %}
